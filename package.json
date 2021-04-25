@@ -1,5 +1,5 @@
 {
-  "name": "safestringify",
+  "name": "@yehonadav/safestringify",
   "version": "1.0.1",
   "description": "Replace JSON.stringify with safeStringify to stringify circular objects",
   "author": "yehonadav",
@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c -w",
-    "build:version": "npm run build && npm version patch && npm publish",
+    "build:version": "npm run build && npm version patch && npm publish --access=public",
     "update:version": "git add . && git commit -am \"update\" && git push && npm run build:version",
     "i:update:version": "npm i && npm run update:version"
   },
