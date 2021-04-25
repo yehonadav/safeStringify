@@ -4,6 +4,12 @@ Replace ```JSON.stringify``` with ```safeStringify``` to stringify circular obje
 safely stringify objects to json format  
 and discard duplicate references to prevent loops  
 
+## install
+
+```
+npm i @yehonadav/safestringify
+```
+
 ## usage
 
 ```typescript
