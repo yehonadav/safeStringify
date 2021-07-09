@@ -28,13 +28,7 @@ export const errorReplacerFactory = () => {
 
   return (_key: any, value: any) => {
     if (value instanceof Error) {
-      const error: any = {};
-
-      Object.getOwnPropertyNames(value).forEach((propName) => {
-        error[propName] = value[propName];
-      });
-
-      return error;
+      return objectifyError(value);
     }
     return _replacer(cache)(_key, value);
   }
