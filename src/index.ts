@@ -1,29 +1,33 @@
-// safely handles circular references
-export const replacer = () => {
-  const cache:Array<any>|null = [];
+const _replacer = (cache:Array<any>|null) => (_key: string, value: any) =>
+  typeof value === "object" && value !== null
+    // @ts-ignore
+    ? cache.includes(value)
+    ? undefined // Duplicate reference found, discard key
+    // @ts-ignore
+    : cache.push(value) && value // Store value in our collection
+    : value;
 
-  return (_key: string, value: any) =>
-    typeof value === "object" && value !== null
-      // @ts-ignore
-      ? cache.includes(value)
-        ? undefined // Duplicate reference found, discard key
-        // @ts-ignore
-        : cache.push(value) && value // Store value in our collection
-      : value;
+// safely handles circular references
+export const replacerFactory = () => {
+  const cache:Array<any>|null = [];
+  return _replacer(cache);
 }
 
-export const replaceErrors = (_key: any, value: any) => {
-  if (value instanceof Error) {
-    const error: any = {};
+export const errorReplacerFactory = () => {
+  const cache:Array<any>|null = [];
 
-    Object.getOwnPropertyNames(value).forEach((propName) => {
-      error[propName] = value[propName];
-    });
+  return (_key: any, value: any) => {
+    if (value instanceof Error) {
+      const error: any = {};
 
-    return error;
+      Object.getOwnPropertyNames(value).forEach((propName) => {
+        error[propName] = value[propName];
+      });
+
+      return error;
+    }
+    return _replacer(cache)(_key, value);
   }
-
-  return value;
 }
 
 const withStringify = (call:(obj:any, ...args:any[])=>string) => {
@@ -39,14 +43,14 @@ const withStringify = (call:(obj:any, ...args:any[])=>string) => {
 export const stringify = withStringify((obj):string => {
   return JSON.stringify(
     obj,
-    replacer(),
+    replacerFactory(),
   );
 });
 
 export const safeStringify = withStringify((obj:any, indent = 2):string => {
   return JSON.stringify(
     obj,
-    replacer(),
+    replacerFactory(),
     indent
   );
 });
@@ -54,7 +58,7 @@ export const safeStringify = withStringify((obj:any, indent = 2):string => {
 export const stringifyError = withStringify((obj, indent):string => {
   return JSON.stringify(
     obj,
-    replacer(),
+    errorReplacerFactory(),
     indent
   );
 });
