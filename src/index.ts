@@ -13,6 +13,16 @@ export const replacerFactory = () => {
   return _replacer(cache);
 }
 
+export const objectifyError = (e:Error|any) => {
+  const error: any = {};
+
+  Object.getOwnPropertyNames(e).forEach((propName) => {
+    error[propName] = e[propName];
+  });
+
+  return error;
+}
+
 export const errorReplacerFactory = () => {
   const cache:Array<any>|null = [];
 
